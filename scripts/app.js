@@ -5,7 +5,7 @@ const toDoListArea = document.getElementById("toDoListArea");
 const inProgressListArea = document.getElementById("inProgressListArea");
 const completedListArea = document.getElementById("completedListArea");
 
-const addTaskModal = document.getElementById("addTaskModal");
+const editTaskModal = document.getElementById("editTaskModal");
 
 const task = document.getElementById("task");
 const priorityStatus = document.getElementById("priorityStatus");
@@ -60,14 +60,19 @@ const createTaskCards = (taskArray) => {
         editBtn.className = "text-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 bg-blue-700 hover:bg-blue-600 focus:ring-blue-800";
         editBtn.innerText = "Edit";
         editBtn.addEventListener("click", () => {
-            // editTask()
+            if(editTaskModal.classList.contains("hidden")) {
+                editTaskModal.className = "block overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+            } else {
+                editTaskModal.className = "Hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+            }
+            editTask(taskItem.Id)
         });
         
         const deleteBtn = document.createElement('button');
         deleteBtn.className = "text-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 bg-red-600 hover:bg-red-700 focus:ring-red-900";
         deleteBtn.innerText = "Delete";
         deleteBtn.addEventListener("click", () => {
-            removeFromLocalStorage(taskItem);
+            removeFromLocalStorage(taskItem.Id);
             taskCard.remove();
         })
 
@@ -93,6 +98,16 @@ const createTaskCards = (taskArray) => {
 }
 
 
+const editTask = (taskNumber) => {
+    const dataArray = getFromLocalStorage();
+    let taskToEdit = dataArray.findIndex(task => task.Id == taskNumber);
+    taskToEdit.TaskName = `${task.value}`;
+    taskToEdit.TaskCategory = `${taskCategory.value}`;
+    taskToEdit.PriorityStatus = `${priorityStatus.value}`;
+    taskToEdit.DueDate = `${dueDate.value}`;
+    taskToEdit.Description = `${description.value}`;
+}
+
 // Event Listeners
 saveTaskBtn.addEventListener("click", () => {
     console.log(`${task.value}`);
@@ -101,9 +116,12 @@ saveTaskBtn.addEventListener("click", () => {
     console.log(`${dueDate.value}`);
     console.log(`${description.value}`);
     const dataArray = getFromLocalStorage();
-    const counter = dataArray.length;
+    let taskId = 1;
+    if(dataArray.length != 0) {
+        taskId = parseInt(dataArray[dataArray.length - 1].Id) + 1;
+    }
     let taskObject = {
-        Id: `${counter}`,
+        Id: `${taskId}`,
         TaskName: `${task.value}`,
         TaskCategory: `${taskCategory.value}`,
         PriorityStatus: `${priorityStatus.value}`,
@@ -120,4 +138,5 @@ saveTaskBtn.addEventListener("click", () => {
 
 // On Load
 createTaskCards(initialValues);
+
 

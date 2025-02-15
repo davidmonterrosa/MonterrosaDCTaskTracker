@@ -16,14 +16,12 @@ function saveToLocalStorage(taskItem) {
     localStorage.setItem('TaskList', JSON.stringify(localStorageData));
 }
 
-function removeFromLocalStorage(taskItem) {
+function removeFromLocalStorage(id) {
     let localStorageData = getFromLocalStorage();
+    const indexToDelete = localStorageData.findIndex(task => task.Id == id);
+    localStorageData.splice(indexToDelete, 1);
 
-    let idToRemove = localStorageData.indexOf(taskItem);
-
-    localStorageData.splice(idToRemove, 1);
-
-    localStorage.setItem('Names', JSON.stringify(localStorageData));
+    localStorage.setItem('TaskList', JSON.stringify(localStorageData));
 }
 
 export {getFromLocalStorage, saveToLocalStorage, removeFromLocalStorage}
